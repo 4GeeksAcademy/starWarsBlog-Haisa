@@ -1,3 +1,29 @@
 /* 
     General Styles
 */
+.object-container{
+    padding-top: 30px;
+}
+
+.my-card{
+    min-width: 200px;
+    margin-right: 5px;
+    border: 1px solid rgb(255, 255, 255);
+    border-radius: 10px;
+}
+
+.my-card > div > img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.body-text, .button-footer{
+    padding: 15px;
+}
+
+
+.my-carousel{
+    display: flex;
+    overflow-x: scroll;
+    
+}
