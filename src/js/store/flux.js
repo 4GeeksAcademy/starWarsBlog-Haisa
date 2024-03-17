@@ -1,8 +1,6 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			characters: [],
-			planets: [],
 			urlBase: "https://www.swapi.tech/api",
 			demo: [
 				{
@@ -16,9 +14,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			favorites: [
-
-			]
+			favoritesCounter: 0,
+			selectedFavorites: [],
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -44,64 +41,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 				//reset the global store
 				setStore({ demo: demo });
 			},
-			getCharacters: () => {
-				fetch(`${getStore().urlBase}/people`)
-					.then((response) => response.json())
-					.then((data) => {
-						for( let item of data.results){
-							fetch(item.url)
-							.then((response) => response.json())
-							.then((data) =>{
-								setStore({
-									characters: [...getStore().characters, data.result]
-								})
-							}).catch((err)  => {
-								console.log(err)
-							})
-						}
-					}
-				).catch((err)  => {
-					console.log(err)
-				})
-				
-					
-				
-			},
-
-			getPlanets: () => {
-				fetch(`${getStore().urlBase}/planets`)
-					.then((response) => response.json())
-					.then((data) => {
-						for( let item of data.results){
-							fetch(item.url)
-							.then((response) => response.json())
-							.then((data) =>{
-								setStore({
-									planets: [...getStore().planets, data.result]
-								})
-							}).catch((err)  => {
-								console.log(err)
-							})
-						}
-					}
-				).catch((err)  => {
-					console.log(err)
-				})
-				
-			},
-
-
-			addFavorites: (name  ) => {
-				const store = getStore()
-				console.log(name)
-				setStore({favorites:[...store.favorites ,name]})
-			},
-			removeFavorite: (name) => {
+			addFavorites: (favorite) => {
 				const store = getStore();
-				const updatedFavorites = store.favorites.filter((favorite) => favorite !== name);
-				setStore({ favorites: updatedFavorites });
-			  }
-
+		
+				const isFavoriteAlreadySelected = store.selectedFavorites.some(
+				  (fav) => fav.name === favorite.name
+				);
+				console.log(isFavoriteAlreadySelected);
+				if (!isFavoriteAlreadySelected) {
+				  if (favorite.uid && favorite.name && favorite.type) {
+					const newCounter = store.favoritesCounter + 1;
+					const selectedFavorites = [...store.selectedFavorites, favorite];
+					setStore({ favoritesCounter: newCounter, selectedFavorites });
+					console.log('You picked a favorite!!');
+				  } else {
+					console.error('Invalid favorite object:', favorite);
+				  }
+				}
+			  },
+		
+			  removeFavorite: (favorite) => {
+				const store = getStore();
+				const selectedFavorites = store.selectedFavorites.filter(
+				  (fav) => fav.uid !== favorite.uid
+				);
+				const newCounter = store.favoritesCounter - 1;
+				setStore({ favoritesCounter: newCounter, selectedFavorites });
+			  },
 
 			
 		}

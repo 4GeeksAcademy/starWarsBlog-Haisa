@@ -5,11 +5,7 @@ import { Context } from "../store/appContext";
 
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
-  	const favorites = store.favorites;
-
-	const removeFavorite = (name) => {
-	  actions.removeFavorite(name);
-	};
+	const { favoritesCounter, selectedFavorites } = store;
 
 
 	return (
@@ -22,29 +18,64 @@ export const Navbar = () => {
 				
 				<div className="ml-auto">
 					<div className="dropdown">
-						<a className="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							Favorites {favorites.length}
-						</a>
+					<button
+						id="btnGroupDrop1"
+						type="button"
+						className="btn btn-secondary dropdown-toggle d-flex align-items-center"
+						data-bs-toggle="dropdown"
+						aria-haspopup="true"
+						aria-expanded="false"
+						>
+						Favorites
+						<span className="fav-counter-container">
+							<span className="fav-counter">{favoritesCounter}</span>
+						</span>
+					</button>
 
-						<ul className="dropdown-menu text-dark">
-							{favorites.length === 0 ? (
-							<li>
-								<span className="dropdown-item">No favorites added yet</span>
-							</li>
-							) : (
-							favorites.map((favorite, index) => (
-								<li key={index}>
-								<span className="dropdown-item">
-									{favorite}
-									<button
-									className="btn btn-sm btn-danger ms-2"
-									onClick={() => removeFavorite(favorite)}
-									>
-									X
-									</button>
-								</span>
+						<ul className="dropdown-menu" aria-labelledby="btnGroupDrop1">
+							{selectedFavorites.length > 0 &&
+								selectedFavorites.map((favorite, index) => (
+								<li key={`favorite-${index}`}>
+									{favorite.uid && (
+									<div className="d-flex justify-content-between align-items-center">
+										{favorite.type === 'character' && (
+										<Link
+											to={`/caracter-details/${favorite.uid}`}
+											className="dropdown-item"
+										>
+											{favorite.name}
+										</Link>
+										)}
+										{favorite.type === 'planet' && (
+										<Link
+											to={`/planet-details/${favorite.uid}`}
+											className="dropdown-item"
+										>
+											{favorite.name}
+										</Link>
+										)}
+										{favorite.type === 'vehicle' && (
+										<Link
+											to={`/vehicle-details/${favorite.uid}`}
+											className="dropdown-item"
+										>
+											{favorite.name}
+										</Link>
+										)}
+										<button
+										className="btn btn-outline-danger btn-sm m-2"
+										onClick={() => actions.removeFavorite(favorite)}
+										>
+										<i className="fas fa-trash"></i>
+										</button>
+									</div>
+									)}
 								</li>
-							))
+								))}
+							{selectedFavorites.length === 0 && (
+								<li key="no-favorites">
+								<span className="dropdown-item">No favorites selected</span>
+								</li>
 							)}
 						</ul>
 					</div>
